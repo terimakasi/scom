@@ -10,7 +10,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 11 may 2012 - 02:09
+ * Michel Kern - 16 may 2012 - 01:16
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -40,7 +40,7 @@ import scom.samples.lang.lisp.functions.ItLispCdrF;
 
 public class It implements java.util.Map.Entry<Object, Object> 
 {
-  public final String CLASS_NAME = "scom.ScomIt";  
+  public final String CLASS_NAME = "scom.It";  
   
   public static final String          K_NAME             = "name";
   public static final String          K_FUNCTION         = "function";
