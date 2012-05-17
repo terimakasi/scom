@@ -10,7 +10,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 16 may 2012 - 01:16
+ * Michel Kern - 17 may 2012 - 23:46
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -47,28 +47,33 @@ public class It implements java.util.Map.Entry<Object, Object>
   public static final String          K_VALUE            = "value";
   public static final String          K_CLASS            = "class";
   
-  public static final String          NIL_KV             = "NIL";
-  public static It                    NIL                = new It(NIL_KV, NIL_KV, NIL_KV);
+  public static final String          K_NIL              = "NIL";
+  public static It                    NIL                = new It(K_NIL, K_NIL, K_NIL);
   
-  public static final String          ENVIRONMENT_KV     = "Environment";
-  public static It                    ENVIRONMENT        = new It(ENVIRONMENT_KV, ENVIRONMENT_KV, NIL_KV);
+  public static final String          K_TRUE             = "true";
+  public static It                    TRUE               = new It(K_TRUE, K_TRUE, K_TRUE);
   
-  public static final String          K_CONTEXT          = "context";
-  public static final String          K_DEFAULT_CONTEXT  = "Default Context";
+  public static final String          K_ENVIRONMENT      = "Environment";
+  public static It                    ENVIRONMENT        = new It(K_ENVIRONMENT, K_ENVIRONMENT, K_NIL);
     
   protected HashMap<It, It>           _connections       = new HashMap<It, It>();
   protected HashMap<String, It>       _kv2it             = new HashMap<String, It>();
   protected final           Object    _key;
-  protected HashMap<String, Object>   _contextual_values = new HashMap<String, Object>();
-  protected                 Object    _option;
+  protected                 Object    _value             = It.NIL;
+  protected                 Object    _next              = It.NIL;
   protected final           UUID      _uuid              = UUID.randomUUID();
   
   //*** Private Constructor: API clients must use factory method 'New' instead
-  protected It(Object key, Object value, Object option) 
+  // Usage: if provided key is "" it's value will be instance's UUID
+  protected It(Object key, Object value, Object next) 
   {
-    _key    = key;
-    _contextual_values.put(K_DEFAULT_CONTEXT, value);
-    _option = option;
+    if (key.toString().equals(""))
+      _key = _uuid.toString();
+    else
+      _key  = key;
+    
+    _value  = value;
+    _next   = next;
     init();
   } // Private Constructor
   
@@ -93,7 +98,7 @@ public class It implements java.util.Map.Entry<Object, Object>
     return New(key, value, It.NIL, class_name);
   } //---- New()
   
-  static public It New(Object key, Object value, Object option, String class_name) 
+  static public It New(Object key, Object value, Object next, String class_name) 
   {
     It is_nil = isNIL(key,value);
     //System.out.println("> ScomIt.New class_name = " + class_name);
@@ -108,7 +113,7 @@ public class It implements java.util.Map.Entry<Object, Object>
         
         Constructor constructor = cls.getDeclaredConstructor(new Class[]{Object.class, Object.class, Object.class});
           constructor.setAccessible(true);
-        return (It) constructor.newInstance(new Object[]{key, value, option});
+        return (It) constructor.newInstance(new Object[]{key, value, next});
       }
       catch(Exception e)
       {  
@@ -124,32 +129,30 @@ public class It implements java.util.Map.Entry<Object, Object>
     if (key == null || value == null)     
       return It.NIL;
     
-    String key_str   = key.toString().toUpperCase();
-    String value_str = value.toString().toUpperCase();
+    String key_str   = CastToString(key);
+    String value_str = CastToString(value);
     
-    //---- special test when key/value is ScomIt NIL ----
-    try
-    {
-      It key_it = (It) key;
-      if (key_it != null)
-        key_str = key_it.getKey().toString();
-    }
-    catch (Exception e) {}
-    
-    try
-    {
-      It value_it = (It) value;
-      if (value_it != null)
-        value_str = value_it.getKey().toString();
-    }
-    catch (Exception e) {}
-    //----
-    
-    if (key_str == It.NIL_KV && value_str == It.NIL_KV)
+    if (key_str == It.K_NIL && value_str == It.K_NIL)
       return It.NIL;
       
     return null;
   } //---- isNIL()
+  
+  static private String CastToString(Object o) 
+  {
+    String o_str = "";
+    try
+    {
+      It o_it = (It) o;
+      if (o_it != null)
+        o_str = o_it.getKey().toString();
+    }
+    catch (Exception e) 
+    {
+      o_str = o.toString().toUpperCase();
+    }
+    return o_str;
+  } // CastToString
   
   private static String keyValue(Object key, Object value)
   { 
@@ -179,25 +182,35 @@ public class It implements java.util.Map.Entry<Object, Object>
   
   public It evaluate()
   {   
-    return evaluate(null);
+    return evaluate(It.NIL);
+  } //---- evaluate() 
+  
+  public It evaluate(It arg)
+  {   
+    return this;
   } //---- evaluate() 
     
-  public It evaluate(ArrayList<It> input)
+  public It evaluate(ArrayList<It> arg_list)
   {   
     return this;
   } //---- evaluate() 
   
   static public It buildValue(String value)
   {
-    return It.New(It.K_VALUE, value);
+    return buildValue(value, It.NIL);
   } //---- buildValue()
   
-  static public ArrayList<It> asList(Object arg)
+  static public It buildValue(String value, Object next)
   {
-    return asList(new Object[]{arg});
-  } //---- asList()
+    return new It(It.K_VALUE, value, next);
+  } //---- buildValue()
   
-  static public ArrayList<It> asList(Object[] args)
+  static public ArrayList<It> ToArgList(Object arg)
+  {
+    return ToArgList(new Object[]{arg});
+  } //---- ToArgList()
+  
+  static public ArrayList<It> ToArgList(Object[] args)
   {
      ArrayList<It> arg_list= new ArrayList<It>();
      for (int i=0; i<args.length; i++)
@@ -215,19 +228,11 @@ public class It implements java.util.Map.Entry<Object, Object>
          arg_list.add(item);
      }
      return arg_list;
-  } //---- asList()
+  } //---- ToArgList()
   
   protected void init()
   {
   } //---- init
-  
-  /*
-  public It getIt(String relation_name)
-  { 
-    It it = _kv2it.get(relation_name);
-    return getIt(it);
-  } //---- getIt
-  */
   
   public It getIt(Object relation)
   { 
@@ -251,7 +256,7 @@ public class It implements java.util.Map.Entry<Object, Object>
      return It.New(It.K_FUNCTION, class_name, class_name);
   } //---- getFunction
   
-  public Object getOption() { return _option; }
+  public Object getOption() { return _next; }
   
   public HashMap<It, It> getConnections()
   {   
@@ -259,27 +264,27 @@ public class It implements java.util.Map.Entry<Object, Object>
   } //---- getConnections()
   
   @Override
-  public String toString() { return getValue().toString(); }
+  public String toString() 
+  { return getValue().toString(); }
 
   @Override
   public Object getKey()   { return _key; }
-
-
-  public Object getValue(String context) { return _contextual_values.get(context); }
+  
   @Override
-  public Object getValue()               { return getValue(K_DEFAULT_CONTEXT); }
+  public Object getValue()              
+  { return _value; }
 
-  
-  public Object setValue(Object new_value, String context) 
-  {
-    Object previous_value = getValue(context);
-    _contextual_values.put(context, new_value);
-    return previous_value;
-  } //---- setValue()
-  
   @Override
   public Object setValue(Object new_value) 
   {
-    return setValue(new_value, K_DEFAULT_CONTEXT);
+    Object previous_value = _value;
+    _value = new_value;
+    return previous_value;
   } //---- setValue()
+  
+  public Object getNext()              
+  { return _next; }
+  
+  public String getUUID()              
+  { return _uuid.toString(); }
 } //---------- It

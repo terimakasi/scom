@@ -1,10 +1,7 @@
 /**
- * ItCons.java
- * The Lisp 'cons' data structure:
- * a cons is a pair:
- *   - 1st element is returned by car() function
- *   - 2nd element is returned by cdr() function
- * http://en.wikipedia.org/wiki/Conshttp://en.wikipedia.org/wiki/Cons
+ * ItLispAtomF.java
+ * atom() Lisp function
+ * http://www.math.utah.edu/docs/info/emacs-lisp-intro_8.html
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
@@ -27,39 +24,41 @@
  * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * ...................................................................................
  */
-package scom.samples.lang.lisp;
+package scom.samples.lang.lisp.functions;
 
 import java.util.ArrayList;
-import scom.It;
-import scom.It;
-import scom.samples.lang.lisp.functions.ItLispConsF;
+import scom.*;
+import scom.samples.lang.lisp.*;
 
-public class ItCons extends It
+public class ItLispAtomF extends It
 {
-  public static final String CLASS_NAME = "scom.samples.lang.lisp.ItCons";
-  
-  protected ItCons(Object key, Object value, Object next) 
+  public static final String NAME       = "cdr";
+  public static final String CLASS_NAME = "scom.samples.lang.lisp.functions.ItLispAtomF";
+          
+  protected ItLispAtomF(Object key, Object value, Object next) 
   {
     super(key, value, next);
-    //System.out.println("  > ScomCons key:" + key + " value:" + value + " option:" + option);
-    
-    connect(ItLisp.CAR, New(It.K_VALUE, value));
-    connect(ItLisp.CDR, New(It.K_VALUE, next));
   } // Private Constructor
   
   @Override
-  public String toString()
-  {      
-    String to_string = "";
-    It car_it = getIt(ItLisp.CAR);
-    String car_it_str = car_it.toString();
+  public It evaluate(ArrayList<It> input)
+  {  
+    if (input.size() < 1) return It.TRUE;
     
-    It cdr_it = getIt(ItLisp.CDR);
-    String cdr_it_str = cdr_it.toString();
-    if (cdr_it_str.equals(It.K_NIL))
-      to_string = car_it.getValue().toString();
-    else
-      to_string = "(" + car_it_str + "," + cdr_it_str + ")";   
-    return to_string;
-  } //---- toString() 
-} //---------- ItCons
+    It cons_it = input.get(0);
+    //System.out.println("ItLispAtompF.evaluate cons_it  key:" + cons_it.getKey() + " value:" + cons_it.getValue());
+   
+    if (cons_it.getNext() == It.NIL)
+      return It.TRUE;
+    
+    It next_it = It.TRUE;
+    try 
+    {
+      next_it = (It) cons_it.getNext(); 
+      return It.NIL;
+    }
+    catch (Exception e) {}
+    
+    return It.TRUE;
+  } //---- evaluate() 
+} //---------- ItLispAtomF

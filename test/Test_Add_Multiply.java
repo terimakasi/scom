@@ -4,7 +4,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 1 may 2012 - 23:42
+ * Michel Kern - 17 may 2012 - 23:46
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -39,9 +39,8 @@ public class Test_Add_Multiply
     It add_function               = It.New(It.K_FUNCTION, "add",      ItAdd.CLASS_NAME);
     It multiply_function          = It.New(It.K_FUNCTION, "multiply", ItMultiply.CLASS_NAME);
    
-    ArrayList<It> add_params      = It.asList(new Object[]{"1.5", "3.5"});
-    ArrayList<It> multiply_params = It.asList(new Object[]{"2", "3"});
-      multiply_params.add(add_function.evaluate(add_params));
+    ArrayList<It> multiply_params = It.ToArgList(new Object[]{"2", "3"});
+      multiply_params.add(add_function.evaluate(It.ToArgList(new Object[]{"1.5", "3.5"})));
       
     It multiply_result = multiply_function.evaluate(multiply_params);
     System.out.println("(1.5 + 3.5) * 2 * 3 = " + multiply_result);

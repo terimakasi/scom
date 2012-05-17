@@ -5,7 +5,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 1 may 2012 - 23:42
+ * Michel Kern - 17 may 2012 - 23:46
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -35,9 +35,9 @@ public class ItLispCdrF extends It
   public static final String NAME       = "cdr";
   public static final String CLASS_NAME = "scom.samples.lang.lisp.functions.ItLispCdrF";
           
-  protected ItLispCdrF(Object key, Object value, Object option) 
+  protected ItLispCdrF(Object key, Object value, Object next) 
   {
-    super(key, value, option);
+    super(key, value, next);
   } // Private Constructor
   
   @Override
@@ -46,6 +46,13 @@ public class ItLispCdrF extends It
     if (input.size() != 1) return It.NIL;
     
     It cons_it = input.get(0);
-    return cons_it.getIt(ItLisp.CDR);
+    if (cons_it.getNext() == It.NIL)
+      return It.NIL;
+    
+    It    next_it = It.NIL;
+    try { next_it = (It) cons_it.getNext(); }
+    catch (Exception e) {}
+    
+    return next_it;
   } //---- evaluate() 
 } //---------- ItLispCdrF

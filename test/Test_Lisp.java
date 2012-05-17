@@ -5,7 +5,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 8 may 2012 - 16:34
+ * Michel Kern - 17 may 2012 - 23:46
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -26,7 +26,7 @@
  */
 package scom.test;
 
-import scom.samples.lang.lisp.repl.*;
+import scom.samples.lang.lisp.ItLisp;
 import java.util.ArrayList;
 import scom.*;
 import scom.samples.lang.lisp.*;
@@ -40,7 +40,9 @@ public class Test_Lisp
   {
     System.out.println("**** Test_Lisp ****");
     
-    _repl = It.New(It.K_VALUE, "repl", ItLispRepl.CLASS_NAME);
+    _repl = It.New(It.K_VALUE, "repl", ItLisp.CLASS_NAME);
+    
+    System.out.println("   'TRUE' atom:       " + It.TRUE);
     
     It cons1 = It.New(It.K_VALUE, "1", It.NIL, ItCons.CLASS_NAME);
     System.out.println("   cons1:             " + cons1.evaluate());
@@ -54,25 +56,40 @@ public class Test_Lisp
     It list1 = It.New(It.K_VALUE, cons1, cons2, ItCons.CLASS_NAME);
     System.out.println("   list1:             " + list1.evaluate());
     
-    ArrayList<It> params = It.asList(list1);
-    System.out.println("   car(list1):        " + ItLispRepl.ENVIRONMENT.getIt("car").evaluate(params));
-    System.out.println("   cdr(list1):        " + ItLispRepl.ENVIRONMENT.getIt("cdr").evaluate(params));
+    ArrayList<It> params = It.ToArgList(list1);
+    System.out.println("   atom(TRUE):        " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(It.TRUE)));
+    System.out.println("   atom(NIL):         " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(It.NIL)));
+    System.out.println("   atom(cons1):       " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(cons1)));
+    System.out.println("   atom(cons2):       " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(cons2)));
+    System.out.println("   atom(car):         " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(It.ENVIRONMENT.getIt("car"))));
+    System.out.println("   atom(list1):       " + It.ENVIRONMENT.getIt("atom").evaluate(params));
+        
+    System.out.println("   car(list1):        " + It.ENVIRONMENT.getIt("car").evaluate(params));
+    System.out.println("   cdr(list1):        " + It.ENVIRONMENT.getIt("cdr").evaluate(params));
     
-    params = It.asList(new Object[] {list1, cons3});
-    System.out.println("   cons(list1,cons3): " + ItLispRepl.ENVIRONMENT.getIt("cons").evaluate(params));
+    params = It.ToArgList(new Object[] {list1, cons3});
+    System.out.println("   cons(list1,cons3): " + It.ENVIRONMENT.getIt("cons").evaluate(params));
     
-    params = It.asList(new Object[] {"1 2 3"});
-    System.out.println("   quote(1,2,3): " + ItLispRepl.ENVIRONMENT.getIt("quote").evaluate(params));
+    It list2 = It.New(It.K_VALUE, cons1, cons2, ItCons.CLASS_NAME);
+    System.out.println("   atom(list2):       " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(list2)));
+    
+    params = It.ToArgList(new Object[] {cons1, cons1});
+    System.out.println("   eq(cons1,cons1):   " + It.ENVIRONMENT.getIt("eq").evaluate(params)); 
+    
+    params = It.ToArgList(new Object[] {cons1, cons2});
+    System.out.println("   eq(cons1,cons2):   " + It.ENVIRONMENT.getIt("eq").evaluate(params));   
+    
+    params = It.ToArgList(new Object[] {"1 2 3"});
+    System.out.println("   quote(1,2,3):      " + It.ENVIRONMENT.getIt("quote").evaluate(params));
    
-    _repl.evaluate(It.asList("1"));
-    _repl.evaluate(It.asList("(quote (2 3 5 7 11 13 17 19))"));
+    _repl.evaluate(It.ToArgList("1"));
+    _repl.evaluate(It.ToArgList("1.0"));
+    _repl.evaluate(It.ToArgList("\"Hello\""));
+    _repl.evaluate(It.ToArgList("car"));
+    
+    _repl.evaluate(It.ToArgList("(quote (2 3 5 7 11 13 17 19))"));
+    _repl.evaluate(It.ToArgList("('(2 3 5 7 11 13 17 19))"));
     
     _repl.evaluate();
   } //---- main()
-  
-  private static void evaluate(String input)
-  {
-    It output = _repl.getIt(ItLispRepl.K_PARSE).evaluate(It.asList(input));
-    System.out.println(output.getValue());
-  } //---- evaluate
 } //---------- Test_Lisp

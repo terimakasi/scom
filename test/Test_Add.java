@@ -4,7 +4,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 1 may 2012 - 23:42
+ * Michel Kern - 17 may 2012 - 23:46
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -35,9 +35,7 @@ public class Test_Add
   {
     System.out.println("**** Test_Add ****");
     
-    ArrayList<It> add_params = It.asList(new Object[]{"0.33", "0.66"});
-    
     It add_function = It.New(It.K_FUNCTION, "add", ItAdd.CLASS_NAME);
-    System.out.println(add_function.evaluate(add_params));
+    System.out.println(add_function.evaluate(It.ToArgList(new Object[]{"0.33", "0.66"})));
   } //---- main()
 } //---------- Test_Add

@@ -1,12 +1,19 @@
 /**
  * ItLisp.java
- * http://www.linuxselfhelp.com/gnu/emacs-lisp-intro/html_chapter/emacs-lisp-intro_8.html
- * http://fr.wikipedia.org/wiki/Common_Lisp
- * http://en.wikipedia.org/wiki/Conshttp://en.wikipedia.org/wiki/Cons
+ * REPL: Read-Eval-Print-Loop
+ * http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
+ * http://lib.store.yahoo.net/lib/paulgraham/acl2.txt
+ * http://www.cs.sfu.ca/CourseCentral/310/pwfong/Lisp/1/tutorial1.html
+ * 
+ * Lisp in Lisp
+ * http://lib.store.yahoo.net/lib/paulgraham/jmc.lisp
+ * 
+ * Lisp in awk:
+ * http://www.cs.cmu.edu/Groups/AI/html/faqs/lang/lisp/part1/faq-doc-6.html
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 1 may 2012 - 23:42
+ * Michel Kern - 17 may 2012 - 23:46
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -27,26 +34,94 @@
  */
 package scom.samples.lang.lisp;
 
-public class ItLisp
-{
-  public static final String CAR            = "car";
-  public static final String CDR            = "cdr";
-  public static final String K_UNKNOWN_TYPE = "Unknown";
-  public static final String K_INTEGER_TYPE = "Integer";
-  public static final String K_DOUBLE_TYPE  = "Double";
-  public static final String K_SYMBOL_TYPE  = "Symbol";
-  public static final String K_WHITESPACE   = " ";
-  public static final String K_OPEN_LIST    = "(";
-  public static final String K_CLOSE_LIST   = ")";
-} //---------- ItLisp
-// http://lib.store.yahoo.net/lib/paulgraham/acl2.txt
-// http://www.cs.sfu.ca/CourseCentral/310/pwfong/Lisp/1/tutorial1.html
+import java.io.*;
+import java.util.ArrayList;
+import scom.It;
+import scom.samples.lang.lisp.functions.*;
 
+public class ItLisp extends It
+{
+  public static final String CLASS_NAME         = "scom.samples.lang.lisp.ItLisp";
+  public static final String K_PARSE            = "parse";
+  
+  public static final String CAR                = "car";
+  public static final String CDR                = "cdr";
+  public static final String K_UNKNOWN_TYPE     = "Unknown";
+  public static final String K_INTEGER_TYPE     = "Integer";
+  public static final String K_DOUBLE_TYPE      = "Double";
+  public static final String K_STRING_TYPE      = "String";
+  public static final String K_SYMBOL_TYPE      = "Symbol";
+  public static final String K_WHITESPACE       = " ";
+  public static final String K_OPEN_LIST        = "(";
+  public static final String K_CLOSE_LIST       = ")";
+  
+  private BufferedReader     _reader        = new BufferedReader(new InputStreamReader(System.in));
+          
+  protected ItLisp(Object key, Object value, Object next) 
+  {
+    super(key, value, next);
+  } // Private Constructor
+  
+  //---- Initialize Lisp Environment
+  protected void init()
+  {
+    It parse_f = ENVIRONMENT.getFunction(ItLispParseF.CLASS_NAME);
+    TRUE.setValue("T");
+    
+    connect(K_PARSE, parse_f);
+      
+    ENVIRONMENT.connect("car",   ENVIRONMENT.getFunction(ItLispCarF.CLASS_NAME));
+    ENVIRONMENT.connect("cdr",   ENVIRONMENT.getFunction(ItLispCdrF.CLASS_NAME));
+    ENVIRONMENT.connect("cons",  ENVIRONMENT.getFunction(ItLispConsF.CLASS_NAME));
+    ENVIRONMENT.connect("atom",  ENVIRONMENT.getFunction(ItLispAtomF.CLASS_NAME));
+    ENVIRONMENT.connect("eq",    ENVIRONMENT.getFunction(ItLispEqF.CLASS_NAME));
+    ENVIRONMENT.connect("quote", ENVIRONMENT.getFunction(ItLispQuoteF.CLASS_NAME));
+  } //---- init
+  
+  @Override
+  public It evaluate(ArrayList<It> input)
+  { 
+    boolean loop_enabled = true;
+              
+    while (loop_enabled)
+    {
+      System.out.print("> ");
+      String input_str = "";
+      
+      if (input!= null && input.size()>0)
+      { 
+        loop_enabled = false;
+        input_str = input.get(0).toString();
+        System.out.println(input_str);
+      }
+      else
+      {
+        try
+        {
+          input_str = _reader.readLine();
+        }
+        catch (Exception e) {}
+      }
+      
+      It output = getIt(K_PARSE).evaluate(It.ToArgList(input_str));
+      System.out.println("  " + output.getValue());
+    }
+    
+    return It.NIL;
+  } //---- evaluate() 
+} //---------- ItLisp
 /* Lisp in Lisp
  * http://lib.store.yahoo.net/lib/paulgraham/jmc.lisp
 ; The Lisp defined in McCarthy's 1960 paper, translated into CL.
-; Assumes only quote, atom, eq, cons, car, cdr, cond.
+; Assumes only quote, atom, eq, cons, car, cdr, cond
+;                     ****  **  ****  ***  ***
 ; Bug reports to lispcode@paulgraham.com.
+
+; caar:    (defun caar (list) (car (car list)))
+; cadar:
+; caddar:
+; cadr:
+; caddr:
 
 (defun null. (x)
   (eq x '()))
