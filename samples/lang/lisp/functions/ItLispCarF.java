@@ -47,6 +47,6 @@ public class ItLispCarF extends It
     if (input.size() != 1) return It.NIL;
     
     It cons_it = input.get(0);
-    return cons_it.getIt(ItLisp.CAR);
+    return cons_it.getFacet(ItLisp.CAR);
   } //---- evaluate() 
 } //---------- ItLispCarF

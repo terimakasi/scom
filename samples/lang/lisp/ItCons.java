@@ -43,18 +43,18 @@ public class ItCons extends It
     super(key, value, next);
     //System.out.println("  > ScomCons key:" + key + " value:" + value + " option:" + option);
     
-    connect(ItLisp.CAR, New(It.K_VALUE, value));
-    connect(ItLisp.CDR, New(It.K_VALUE, next));
+    addFacet(ItLisp.CAR, New(It.K_VALUE, value));
+    addFacet(ItLisp.CDR, New(It.K_VALUE, next));
   } // Private Constructor
   
   @Override
   public String toString()
   {      
     String to_string = "";
-    It car_it = getIt(ItLisp.CAR);
+    It car_it = getFacet(ItLisp.CAR);
     String car_it_str = car_it.toString();
     
-    It cdr_it = getIt(ItLisp.CDR);
+    It cdr_it = getFacet(ItLisp.CDR);
     String cdr_it_str = cdr_it.toString();
     if (cdr_it_str.equals(It.K_NIL))
       to_string = car_it.getValue().toString();

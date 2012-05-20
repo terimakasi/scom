@@ -39,8 +39,8 @@ public class Test_Add_Multiply
     It add_function               = It.New(It.K_FUNCTION, "add",      ItAdd.CLASS_NAME);
     It multiply_function          = It.New(It.K_FUNCTION, "multiply", ItMultiply.CLASS_NAME);
    
-    ArrayList<It> multiply_params = It.ToArgList(new Object[]{"2", "3"});
-      multiply_params.add(add_function.evaluate(It.ToArgList(new Object[]{"1.5", "3.5"})));
+    ArrayList<It> multiply_params = It.ToList(new Object[]{"2", "3"});
+      multiply_params.add(add_function.evaluate(It.ToList(new Object[]{"1.5", "3.5"})));
       
     It multiply_result = multiply_function.evaluate(multiply_params);
     System.out.println("(1.5 + 3.5) * 2 * 3 = " + multiply_result);

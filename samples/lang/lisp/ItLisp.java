@@ -1,6 +1,6 @@
 /**
  * ItLisp.java
- * REPL: Read-Eval-Print-Loop
+ * Lisp Interpreter: REPL (Read-Eval-Print-Loop)
  * http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop
  * http://lib.store.yahoo.net/lib/paulgraham/acl2.txt
  * http://www.cs.sfu.ca/CourseCentral/310/pwfong/Lisp/1/tutorial1.html
@@ -55,7 +55,10 @@ public class ItLisp extends It
   public static final String K_OPEN_LIST        = "(";
   public static final String K_CLOSE_LIST       = ")";
   
-  private BufferedReader     _reader        = new BufferedReader(new InputStreamReader(System.in));
+  public static       int    _init_count        = 0;
+  
+  private BufferedReader     _reader            = new BufferedReader(new InputStreamReader(System.in));
+  private It                 _parser;
           
   protected ItLisp(Object key, Object value, Object next) 
   {
@@ -63,20 +66,23 @@ public class ItLisp extends It
   } // Private Constructor
   
   //---- Initialize Lisp Environment
-  protected void init()
+  @Override
+  protected void init_environment()
   {
-    It parse_f = ENVIRONMENT.getFunction(ItLispParseF.CLASS_NAME);
-    TRUE.setValue("T");
+    super.init_environment();
+
+    _parser = ENVIRONMENT.getFunction("parser", ItLispParser.CLASS_NAME);
+    ENVIRONMENT.addFacet("lexer", ENVIRONMENT.getFunction("lexer",  ItLispLexer.CLASS_NAME));
     
-    connect(K_PARSE, parse_f);
+    TRUE.setValue("T"); // standard value of 'TRUE' in Lisp
       
-    ENVIRONMENT.connect("car",   ENVIRONMENT.getFunction(ItLispCarF.CLASS_NAME));
-    ENVIRONMENT.connect("cdr",   ENVIRONMENT.getFunction(ItLispCdrF.CLASS_NAME));
-    ENVIRONMENT.connect("cons",  ENVIRONMENT.getFunction(ItLispConsF.CLASS_NAME));
-    ENVIRONMENT.connect("atom",  ENVIRONMENT.getFunction(ItLispAtomF.CLASS_NAME));
-    ENVIRONMENT.connect("eq",    ENVIRONMENT.getFunction(ItLispEqF.CLASS_NAME));
-    ENVIRONMENT.connect("quote", ENVIRONMENT.getFunction(ItLispQuoteF.CLASS_NAME));
-  } //---- init
+    ENVIRONMENT.addFacet("car",   ENVIRONMENT.getFunction("car",  ItLispCarF.CLASS_NAME));  
+    ENVIRONMENT.addFacet("cdr",   ENVIRONMENT.getFunction("cdr",  ItLispCdrF.CLASS_NAME));
+    ENVIRONMENT.addFacet("cons",  ENVIRONMENT.getFunction("cons",  ItLispConsF.CLASS_NAME));
+    ENVIRONMENT.addFacet("atom",  ENVIRONMENT.getFunction("atom",  ItLispAtomF.CLASS_NAME));
+    ENVIRONMENT.addFacet("eq",    ENVIRONMENT.getFunction("eq",    ItLispEqF.CLASS_NAME));
+    ENVIRONMENT.addFacet("quote", ENVIRONMENT.getFunction("quote", ItLispQuoteF.CLASS_NAME));
+  } //---- init_environment
   
   @Override
   public It evaluate(ArrayList<It> input)
@@ -103,13 +109,14 @@ public class ItLisp extends It
         catch (Exception e) {}
       }
       
-      It output = getIt(K_PARSE).evaluate(It.ToArgList(input_str));
+      It output = _parser.evaluate(It.ToList(input_str));
       System.out.println("  " + output.getValue());
     }
     
     return It.NIL;
   } //---- evaluate() 
 } //---------- ItLisp
+
 /* Lisp in Lisp
  * http://lib.store.yahoo.net/lib/paulgraham/jmc.lisp
 ; The Lisp defined in McCarthy's 1960 paper, translated into CL.

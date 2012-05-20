@@ -36,6 +36,6 @@ public class Test_Add
     System.out.println("**** Test_Add ****");
     
     It add_function = It.New(It.K_FUNCTION, "add", ItAdd.CLASS_NAME);
-    System.out.println(add_function.evaluate(It.ToArgList(new Object[]{"0.33", "0.66"})));
+    System.out.println(add_function.evaluate(It.ToList(new Object[]{"0.33", "0.66"})));
   } //---- main()
 } //---------- Test_Add

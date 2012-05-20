@@ -4,7 +4,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 17 may 2012 - 23:46
+ * Michel Kern - 20 may 2012 - 22:31
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -31,35 +31,45 @@ public class Test1
 {
   public static void main(String[] args) 
   {
-    System.out.println("**** Test1: add connections and retrieve them ****");
+    System.out.println("**** Test1: connections and AOM (Adaptative Object Model) ****");
     
-    It item1          = It.New(It.K_NAME, "item1");
-    It thing_class    = It.New(It.K_NAME, "Thing");
-    It object_class   = It.New(It.K_NAME, "Object");
+    It thing_class          = It.NewClass("Thing");
+    It anotherthing_class   = It.NewClass("AnotherThing");
     
-    It meta_class     = It.New(It.K_NAME, "Class");
-    item1.connect(It.K_CLASS, thing_class);
-    thing_class.connect(It.K_CLASS, meta_class);
+    System.out.print("'Integer'          : "      + It.INTEGER);
+    System.out.print("   super(Integer):       "  + It.INTEGER.getFacet(It.K_SUPERCLASS));
+    System.out.println("    class(Integer):     " + It.INTEGER.getFacet(It.K_CLASS));
     
-    System.out.println("evaluate on 'item1': " + item1.evaluate());
+    System.out.print("'thing_class'      : "       + thing_class);
+    System.out.print("     super(thing_class):   " + It.INTEGER.getFacet(It.K_SUPERCLASS));
+    System.out.println("    class(thing_class): "  + thing_class.getFacet(It.K_CLASS));
     
-    It query_result;
-    query_result = item1.getIt(It.K_CLASS);
-    System.out.println("  query(class) on '" + item1.getValue() + "': " + query_result.evaluate());
+    It thing_it = thing_class.evaluate(); // implicitly calls New(thing_class)
+    System.out.print("'" + thing_it + "'           : " + thing_it);
+    System.out.println("                                    class('" + thing_it + "'):    " + thing_it.getFacet(It.K_CLASS));
     
-    query_result = query_result.getIt(It.K_CLASS);
-    System.out.println("  query(name,class) on '" + thing_class.getValue() + "': " + query_result.evaluate());
     
-    System.out.println("  query(***) on '" + item1.getValue() + "': " + item1.getIt("***"));
+    thing_it = It.New(thing_class);
     
-    item1.setValue(It.buildValue("item1_new_name"));
-    System.out.println("after modification of 'item1' value:");
-    System.out.println("  V: " + item1.getValue());
-    System.out.println("  evaluate on 'item1': " + item1.evaluate());
+    System.out.println("'" + thing_it + "'           : " + thing_it + "\n");
+
+    It object_it            = It.New(It.OBJECT);
+    System.out.println("'" + object_it + "'          : " + object_it);
     
-    item1.connect(It.K_CLASS, object_class);
-    System.out.println("after modification of 'item1' class:");
-    query_result = item1.getIt(It.K_CLASS);
-    System.out.println("  query(name,class) on '" + item1.getValue() + "': " + query_result.evaluate());
+    object_it               = It.New(It.OBJECT);
+    System.out.println("'" + object_it + "'          : " + object_it + "\n");
+  
+    It another_thing_it     = It.New(anotherthing_class);
+    System.out.println("'another_thing_it' : " + another_thing_it);
+    
+    It thing_it_class       = thing_it.getFacet(It.K_CLASS);
+    System.out.println("  'class' facet of '" + thing_it.getValue() + "': "       + thing_it_class);
+    
+    It thing_it_class_class = thing_it_class.getFacet(It.K_CLASS);
+    System.out.println("  'class' facet of '" + thing_it_class.getFacet(It.K_CLASS) + "' : " + thing_it_class_class);
+    
+    thing_it.setValue(It.NewValue("thing1_new_name"));
+    System.out.println("after modification of 'thing_it'");
+    System.out.println("  '" + thing_it + "'.evaluate()    : " + thing_it.evaluate());
   } //---- main()
 } //---------- Test1

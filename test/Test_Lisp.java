@@ -1,6 +1,6 @@
 /**
  * Test_Lisp.java
- * Test of Scom Lisp based Interpreter
+ * Test of It Lisp based Interpreter
  * http://lib.store.yahoo.net/lib/paulgraham/jmc.lisp
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
@@ -56,40 +56,40 @@ public class Test_Lisp
     It list1 = It.New(It.K_VALUE, cons1, cons2, ItCons.CLASS_NAME);
     System.out.println("   list1:             " + list1.evaluate());
     
-    ArrayList<It> params = It.ToArgList(list1);
-    System.out.println("   atom(TRUE):        " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(It.TRUE)));
-    System.out.println("   atom(NIL):         " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(It.NIL)));
-    System.out.println("   atom(cons1):       " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(cons1)));
-    System.out.println("   atom(cons2):       " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(cons2)));
-    System.out.println("   atom(car):         " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(It.ENVIRONMENT.getIt("car"))));
-    System.out.println("   atom(list1):       " + It.ENVIRONMENT.getIt("atom").evaluate(params));
+    ArrayList<It> params = It.ToList(list1);
+    System.out.println("   atom(TRUE):        " + It.ENVIRONMENT.getFacet("atom").evaluate(It.ToList(It.TRUE)));
+    System.out.println("   atom(NIL):         " + It.ENVIRONMENT.getFacet("atom").evaluate(It.ToList(It.NIL)));
+    System.out.println("   atom(cons1):       " + It.ENVIRONMENT.getFacet("atom").evaluate(It.ToList(cons1)));
+    System.out.println("   atom(cons2):       " + It.ENVIRONMENT.getFacet("atom").evaluate(It.ToList(cons2)));
+    System.out.println("   atom(car):         " + It.ENVIRONMENT.getFacet("atom").evaluate(It.ToList(It.ENVIRONMENT.getFacet("car"))));
+    System.out.println("   atom(list1):       " + It.ENVIRONMENT.getFacet("atom").evaluate(params));
         
-    System.out.println("   car(list1):        " + It.ENVIRONMENT.getIt("car").evaluate(params));
-    System.out.println("   cdr(list1):        " + It.ENVIRONMENT.getIt("cdr").evaluate(params));
+    System.out.println("   car(list1):        " + It.ENVIRONMENT.getFacet("car").evaluate(params));
+    System.out.println("   cdr(list1):        " + It.ENVIRONMENT.getFacet("cdr").evaluate(params));
     
-    params = It.ToArgList(new Object[] {list1, cons3});
-    System.out.println("   cons(list1,cons3): " + It.ENVIRONMENT.getIt("cons").evaluate(params));
+    params = It.ToList(new Object[] {list1, cons3});
+    System.out.println("   cons(list1,cons3): " + It.ENVIRONMENT.getFacet("cons").evaluate(params));
     
     It list2 = It.New(It.K_VALUE, cons1, cons2, ItCons.CLASS_NAME);
-    System.out.println("   atom(list2):       " + It.ENVIRONMENT.getIt("atom").evaluate(It.ToArgList(list2)));
+    System.out.println("   atom(list2):       " + It.ENVIRONMENT.getFacet("atom").evaluate(It.ToList(list2)));
     
-    params = It.ToArgList(new Object[] {cons1, cons1});
-    System.out.println("   eq(cons1,cons1):   " + It.ENVIRONMENT.getIt("eq").evaluate(params)); 
+    params = It.ToList(new Object[] {cons1, cons1});
+    System.out.println("   eq(cons1,cons1):   " + It.ENVIRONMENT.getFacet("eq").evaluate(params)); 
     
-    params = It.ToArgList(new Object[] {cons1, cons2});
-    System.out.println("   eq(cons1,cons2):   " + It.ENVIRONMENT.getIt("eq").evaluate(params));   
+    params = It.ToList(new Object[] {cons1, cons2});
+    System.out.println("   eq(cons1,cons2):   " + It.ENVIRONMENT.getFacet("eq").evaluate(params));   
     
-    params = It.ToArgList(new Object[] {"1 2 3"});
-    System.out.println("   quote(1,2,3):      " + It.ENVIRONMENT.getIt("quote").evaluate(params));
+    params = It.ToList(new Object[] {"1 2 3"});
+    System.out.println("   quote(1,2,3):      " + It.ENVIRONMENT.getFacet("quote").evaluate(params));
    
-    _repl.evaluate(It.ToArgList("1"));
-    _repl.evaluate(It.ToArgList("1.0"));
-    _repl.evaluate(It.ToArgList("\"Hello\""));
-    _repl.evaluate(It.ToArgList("car"));
+    _repl.evaluate(It.ToList("1"));
+    _repl.evaluate(It.ToList("1.0"));
+    _repl.evaluate(It.ToList("\"Hello\""));
+    _repl.evaluate(It.ToList("car"));
     
-    _repl.evaluate(It.ToArgList("(quote (2 3 5 7 11 13 17 19))"));
-    _repl.evaluate(It.ToArgList("('(2 3 5 7 11 13 17 19))"));
+    _repl.evaluate(It.ToList("(quote (2 3 5 7 11 13 17 19))"));
+    _repl.evaluate(It.ToList("('(2 3 5 7 11 13 17 19))"));
     
-    _repl.evaluate();
+    //_repl.evaluate();
   } //---- main()
 } //---------- Test_Lisp
