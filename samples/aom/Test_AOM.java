@@ -1,7 +1,6 @@
 /**
- * ItLispAtomF.java
- * atom() Lisp function
- * http://www.math.utah.edu/docs/info/emacs-lisp-intro_8.html
+ * Test_AOM.java
+ * Test of It class: Adaptative Object Model features
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
@@ -24,48 +23,34 @@
  * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * ...................................................................................
  */
-package scom.samples.lang.lisp.functions;
+package scom.samples.aom;
 
-import java.util.ArrayList;
-import scom.*;
-import scom.samples.lang.lisp.*;
-import scom.tutorials.helloworld.ItSuccessorF;
+import static scom.It.*;
+import scom.It;
 
-public class ItLispAtomF extends It
+public class Test_AOM 
 {
-  public static final String NAME       = "cdr";
-  public static final String CLASS_NAME = ItLispAtomF.class.getCanonicalName();
-          
-  protected ItLispAtomF(Object key, Object value, Object next) 
+  public static void main(String[] args) 
   {
-    super(key, value, next);
-  } // Private Constructor
-  
-  @Override
-  public It evaluate(ArrayList<It> input)
-  {  
-    if (input.size() < 1) return It.TRUE;
+    Print("**** Test_AOM: Adaptative Object Model features ****");
     
-    It cons_it = input.get(0);
-    //System.out.println("ItLispAtompF.evaluate cons_it  key:" + cons_it.getKey() + " value:" + cons_it.getValue());
-   
-    if (cons_it.getNext() == It.NIL)
-      return It.TRUE;
+    Print(INTEGER);
+        
+    It thing_class = NewClass("Thing");
+      Print(thing_class); // instance count should be 0
     
-    It next_it = It.TRUE;
-    try 
-    {
-      next_it = (It) cons_it.getNext(); 
-      return It.NIL;
-    }
-    catch (Exception e) {}
+    It thing_it = thing_class.evaluate(); // implicitly calls New(thing_class);
+      Print(thing_it);
+      Print(thing_class); // now instance count should be 1
+
+    It object_it = NIL;
+    object_it = New(OBJECT);
+      Print("'" + object_it + "'          : " + object_it);
     
-    return It.TRUE;
-  } //---- evaluate() 
-  
-  @Override
-  public String toString()
-  {  
-    return NAME;
-  } //---- toString() 
-} //---------- ItLispAtomF
+    object_it = New(OBJECT);
+      Print("'" + object_it + "'          : " + object_it);
+     
+    Print("----------------------");
+    Print(ENVIRONMENT, WITH_UNLIMITED_DEPTH);
+  } //---- main()
+} //---------- Test_AOM

@@ -8,7 +8,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 17 may 2012 - 23:46
+ * Michel Kern - 27 may 2012 - 16:54
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -32,19 +32,20 @@ package scom.samples.lang.lisp;
 import java.util.ArrayList;
 import scom.It;
 import scom.It;
+import scom.samples.lang.lisp.functions.ItLispCdrF;
 import scom.samples.lang.lisp.functions.ItLispConsF;
 
 public class ItCons extends It
 {
-  public static final String CLASS_NAME = "scom.samples.lang.lisp.ItCons";
+  public static final String CLASS_NAME = ItCons.class.getCanonicalName();
   
   protected ItCons(Object key, Object value, Object next) 
   {
     super(key, value, next);
     //System.out.println("  > ScomCons key:" + key + " value:" + value + " option:" + option);
     
-    addFacet(ItLisp.CAR, New(It.K_VALUE, value));
-    addFacet(ItLisp.CDR, New(It.K_VALUE, next));
+    putFacet(ItLisp.CAR, New(It.K_VALUE, value));
+    putFacet(ItLisp.CDR, New(It.K_VALUE, next));
   } // Private Constructor
   
   @Override

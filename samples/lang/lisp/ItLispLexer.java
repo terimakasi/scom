@@ -5,7 +5,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 17 may 2012 - 23:46
+ * Michel Kern - 27 may 2012 - 16:54
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -26,16 +26,13 @@
  */
 package scom.samples.lang.lisp;
 
-import scom.samples.lang.lisp.ItLisp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 import scom.It;
-import scom.samples.lang.lisp.*;
 
 public class ItLispLexer extends It
 {
-  public static final String CLASS_NAME           = "scom.samples.lang.lisp.ItLispLexer";
+  public static final String CLASS_NAME = ItLispLexer.class.getCanonicalName();
   
   public static final String SEPARATOR_OPEN_LIST  = "(";
   public static final String SEPARATOR_CLOSE_LIST = ")";
@@ -54,7 +51,7 @@ public class ItLispLexer extends It
   } // Private Constructor
    
   @Override
-  //--------------- Lexer ---------------
+  //--------------- Lexer's evaluate ---------------
   public It evaluate(ArrayList<It> input)
   {         
     if (input.size()==0) return It.NIL;
@@ -63,10 +60,10 @@ public class ItLispLexer extends It
     ArrayList<It> tokens_2 = tokenize_phase2(tokens_1);
     ArrayList<It> tokens_3 = tokenize_phase2(tokens_2);
     
-    //setValue(output_str);
     setValue(tokens_3);
     return this;
-  } //---- evaluate() 
+  } //--------------- Lexer's evaluate() 
+ 
   
   ArrayList<It> tokenize_phase1(String arg)
   {
@@ -81,6 +78,7 @@ public class ItLispLexer extends It
     }
     return tokens;
   } //---- tokenize_phase1
+  
   
   ArrayList<It> tokenize_phase2(ArrayList<It> tokens_in)
   {
@@ -118,6 +116,7 @@ public class ItLispLexer extends It
     }
     return tokens_out;
   } //---- tokenize_phase2
+  
   
   ArrayList<It> tokenize_phase3(ArrayList<It> tokens)
   {

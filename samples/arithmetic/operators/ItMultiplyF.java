@@ -1,7 +1,6 @@
 /**
- * ItLispAtomF.java
- * atom() Lisp function
- * http://www.math.utah.edu/docs/info/emacs-lisp-intro_8.html
+ * ItMultiply.java
+ * A Multiplier It subclass which overrides evaluate() method
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
@@ -24,48 +23,35 @@
  * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * ...................................................................................
  */
-package scom.samples.lang.lisp.functions;
+package scom.samples.arithmetic.operators;
 
-import java.util.ArrayList;
 import scom.*;
-import scom.samples.lang.lisp.*;
-import scom.tutorials.helloworld.ItSuccessorF;
+import java.util.ArrayList;
 
-public class ItLispAtomF extends It
+public class ItMultiplyF extends It
 {
-  public static final String NAME       = "cdr";
-  public static final String CLASS_NAME = ItLispAtomF.class.getCanonicalName();
-          
-  protected ItLispAtomF(Object key, Object value, Object next) 
+  public static final String NAME       = ItMultiplyF.class.getName();
+  public static final String CLASS_NAME = ItMultiplyF.class.getCanonicalName();
+      
+  protected ItMultiplyF(Object key, Object value, Object next) 
   {
     super(key, value, next);
   } // Private Constructor
   
   @Override
   public It evaluate(ArrayList<It> input)
-  {  
-    if (input.size() < 1) return It.TRUE;
-    
-    It cons_it = input.get(0);
-    //System.out.println("ItLispAtompF.evaluate cons_it  key:" + cons_it.getKey() + " value:" + cons_it.getValue());
-   
-    if (cons_it.getNext() == It.NIL)
-      return It.TRUE;
-    
-    It next_it = It.TRUE;
-    try 
+  { 
+    Double output_value = new Double(1);
+    for (int i=0; i < input.size(); i++)
     {
-      next_it = (It) cons_it.getNext(); 
-      return It.NIL;
+      output_value *= Double.parseDouble(input.get(i).evaluate().toString());
     }
-    catch (Exception e) {}
-    
-    return It.TRUE;
-  } //---- evaluate() 
+    return It.New("result", output_value.toString());
+  } //---- evaluate()
   
   @Override
   public String toString()
   {  
     return NAME;
-  } //---- toString() 
-} //---------- ItLispAtomF
+  } //---- toString()
+} 

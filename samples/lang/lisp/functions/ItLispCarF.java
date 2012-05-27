@@ -5,7 +5,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 17 may 2012 - 23:46
+ * Michel Kern - 27 may 2012 - 16:54
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -34,7 +34,7 @@ import scom.samples.lang.lisp.ItLisp;
 public class ItLispCarF extends It
 {
   public static final String NAME       = "car";
-  public static final String CLASS_NAME = "scom.samples.lang.lisp.functions.ItLispCarF";
+  public static final String CLASS_NAME = ItLispCarF.class.getCanonicalName();
           
   protected ItLispCarF(Object key, Object value, Object next) 
   {
@@ -49,4 +49,10 @@ public class ItLispCarF extends It
     It cons_it = input.get(0);
     return cons_it.getFacet(ItLisp.CAR);
   } //---- evaluate() 
+  
+  @Override
+  public String toString()
+  {  
+    return NAME;
+  } //---- toString() 
 } //---------- ItLispCarF

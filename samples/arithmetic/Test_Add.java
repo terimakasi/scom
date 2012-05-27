@@ -1,7 +1,6 @@
 /**
- * ItLispAtomF.java
- * atom() Lisp function
- * http://www.math.utah.edu/docs/info/emacs-lisp-intro_8.html
+ * Test_Add.java
+ * Test of the Additioner Item: ScomItemAdd (subclass of ScomItem)
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
@@ -24,48 +23,19 @@
  * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * ...................................................................................
  */
-package scom.samples.lang.lisp.functions;
+package scom.samples.arithmetic;
 
-import java.util.ArrayList;
-import scom.*;
-import scom.samples.lang.lisp.*;
-import scom.tutorials.helloworld.ItSuccessorF;
+import static scom.It.*;
+import scom.samples.arithmetic.operators.ItAddF;
+import scom.It;
 
-public class ItLispAtomF extends It
+public class Test_Add 
 {
-  public static final String NAME       = "cdr";
-  public static final String CLASS_NAME = ItLispAtomF.class.getCanonicalName();
-          
-  protected ItLispAtomF(Object key, Object value, Object next) 
+  public static void main(String[] args) 
   {
-    super(key, value, next);
-  } // Private Constructor
-  
-  @Override
-  public It evaluate(ArrayList<It> input)
-  {  
-    if (input.size() < 1) return It.TRUE;
+    It.Print("**** Test_Add ****");
     
-    It cons_it = input.get(0);
-    //System.out.println("ItLispAtompF.evaluate cons_it  key:" + cons_it.getKey() + " value:" + cons_it.getValue());
-   
-    if (cons_it.getNext() == It.NIL)
-      return It.TRUE;
-    
-    It next_it = It.TRUE;
-    try 
-    {
-      next_it = (It) cons_it.getNext(); 
-      return It.NIL;
-    }
-    catch (Exception e) {}
-    
-    return It.TRUE;
-  } //---- evaluate() 
-  
-  @Override
-  public String toString()
-  {  
-    return NAME;
-  } //---- toString() 
-} //---------- ItLispAtomF
+    It add_function = It.New(K_FUNCTION, "add", ItAddF.CLASS_NAME);
+    It.Print(add_function.evaluate(It.ToList(new Object[]{0.33, 0.66})));
+  } //---- main()
+} //---------- Test_Add

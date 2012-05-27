@@ -13,7 +13,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 17 may 2012 - 23:46
+ * Michel Kern - 27 may 2012 - 16:54
  * Copyright (C) <2012> www.terimakasi.com
  * ...................................................................................
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -41,7 +41,7 @@ import scom.samples.lang.lisp.functions.*;
 
 public class ItLisp extends It
 {
-  public static final String CLASS_NAME         = "scom.samples.lang.lisp.ItLisp";
+  public static final String CLASS_NAME         = ItLisp.class.getCanonicalName();
   public static final String K_PARSE            = "parse";
   
   public static final String CAR                = "car";
@@ -65,24 +65,26 @@ public class ItLisp extends It
     super(key, value, next);
   } // Private Constructor
   
-  //---- Initialize Lisp Environment
+  
+  //---- Initialize Lisp native Object Model ('ENVIRONMENT')
   @Override
-  protected void init_environment()
+  protected void initEnvironment_()
   {
-    super.init_environment();
+    super.initEnvironment_();
 
     _parser = ENVIRONMENT.getFunction("parser", ItLispParser.CLASS_NAME);
-    ENVIRONMENT.addFacet("lexer", ENVIRONMENT.getFunction("lexer",  ItLispLexer.CLASS_NAME));
+    ENVIRONMENT.putFacet("lexer", ENVIRONMENT.getFunction("lexer",  ItLispLexer.CLASS_NAME));
     
     TRUE.setValue("T"); // standard value of 'TRUE' in Lisp
       
-    ENVIRONMENT.addFacet("car",   ENVIRONMENT.getFunction("car",  ItLispCarF.CLASS_NAME));  
-    ENVIRONMENT.addFacet("cdr",   ENVIRONMENT.getFunction("cdr",  ItLispCdrF.CLASS_NAME));
-    ENVIRONMENT.addFacet("cons",  ENVIRONMENT.getFunction("cons",  ItLispConsF.CLASS_NAME));
-    ENVIRONMENT.addFacet("atom",  ENVIRONMENT.getFunction("atom",  ItLispAtomF.CLASS_NAME));
-    ENVIRONMENT.addFacet("eq",    ENVIRONMENT.getFunction("eq",    ItLispEqF.CLASS_NAME));
-    ENVIRONMENT.addFacet("quote", ENVIRONMENT.getFunction("quote", ItLispQuoteF.CLASS_NAME));
-  } //---- init_environment
+    ENVIRONMENT.putFacet("car",   ENVIRONMENT.getFunction("car",  ItLispCarF.CLASS_NAME));  
+    ENVIRONMENT.putFacet("cdr",   ENVIRONMENT.getFunction("cdr",  ItLispCdrF.CLASS_NAME));
+    ENVIRONMENT.putFacet("cons",  ENVIRONMENT.getFunction("cons",  ItLispConsF.CLASS_NAME));
+    ENVIRONMENT.putFacet("atom",  ENVIRONMENT.getFunction("atom",  ItLispAtomF.CLASS_NAME));
+    ENVIRONMENT.putFacet("eq",    ENVIRONMENT.getFunction("eq",    ItLispEqF.CLASS_NAME));
+    ENVIRONMENT.putFacet("quote", ENVIRONMENT.getFunction("quote", ItLispQuoteF.CLASS_NAME));
+  } //---- InitEnvironment_
+  
   
   @Override
   public It evaluate(ArrayList<It> input)
@@ -110,7 +112,8 @@ public class ItLisp extends It
       }
       
       It output = _parser.evaluate(It.ToList(input_str));
-      System.out.println("  " + output.getValue());
+      //System.out.println("  " + output.getValue());
+      System.out.println("  " + _parser);
     }
     
     return It.NIL;
