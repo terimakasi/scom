@@ -15,32 +15,17 @@
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
  * Michel Kern - 27 may 2012 - 16:54
  * Copyright (C) <2012> www.terimakasi.com
- * ...................................................................................
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights to use, 
- * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
- * the Software, and to permit persons to whom the Software is furnished to do so, 
- * subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all 
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
- * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS 
- * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
- * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * ...................................................................................
  */
 package scom.samples.lang.lisp;
 
+import scom.samples.lang.lisp.functions.*;
+import scom.It;
 import java.io.*;
 import java.util.ArrayList;
-import scom.It;
-import scom.samples.lang.lisp.functions.*;
 
 public class ItLisp extends It
 {
+  public static final String BASENAME           = ItLisp.class.getSimpleName();
   public static final String CLASS_NAME         = ItLisp.class.getCanonicalName();
   public static final String K_PARSE            = "parse";
   
@@ -68,9 +53,9 @@ public class ItLisp extends It
   
   //---- Initialize Lisp native Object Model ('ENVIRONMENT')
   @Override
-  protected void initEnvironment_()
+  protected void initEnvironment()
   {
-    super.initEnvironment_();
+    super.initEnvironment();
 
     _parser = ENVIRONMENT.getFunction("parser", ItLispParser.CLASS_NAME);
     ENVIRONMENT.putFacet("lexer", ENVIRONMENT.getFunction("lexer",  ItLispLexer.CLASS_NAME));
@@ -83,7 +68,7 @@ public class ItLisp extends It
     ENVIRONMENT.putFacet("atom",  ENVIRONMENT.getFunction("atom",  ItLispAtomF.CLASS_NAME));
     ENVIRONMENT.putFacet("eq",    ENVIRONMENT.getFunction("eq",    ItLispEqF.CLASS_NAME));
     ENVIRONMENT.putFacet("quote", ENVIRONMENT.getFunction("quote", ItLispQuoteF.CLASS_NAME));
-  } //---- InitEnvironment_
+  } //---- initEnvironment
   
   
   @Override
@@ -100,7 +85,7 @@ public class ItLisp extends It
       { 
         loop_enabled = false;
         input_str = input.get(0).toString();
-        System.out.println(input_str);
+        Print(input_str);
       }
       else
       {
@@ -111,12 +96,12 @@ public class ItLisp extends It
         catch (Exception e) {}
       }
       
-      It output = _parser.evaluate(It.ToList(input_str));
+      It output = _parser.evaluate(ToList(input_str));
       //System.out.println("  " + output.getValue());
-      System.out.println("  " + _parser);
+      Print("  " + _parser);
     }
     
-    return It.NIL;
+    return NIL;
   } //---- evaluate() 
 } //---------- ItLisp
 

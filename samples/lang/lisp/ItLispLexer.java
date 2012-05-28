@@ -7,22 +7,6 @@
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
  * Michel Kern - 27 may 2012 - 16:54
  * Copyright (C) <2012> www.terimakasi.com
- * ...................................................................................
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights to use, 
- * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
- * the Software, and to permit persons to whom the Software is furnished to do so, 
- * subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all 
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
- * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS 
- * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
- * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * ...................................................................................
  */
 package scom.samples.lang.lisp;
 
@@ -32,6 +16,7 @@ import scom.It;
 
 public class ItLispLexer extends It
 {
+  public static final String BASENAME   = ItLispLexer.class.getSimpleName();
   public static final String CLASS_NAME = ItLispLexer.class.getCanonicalName();
   
   public static final String SEPARATOR_OPEN_LIST  = "(";
@@ -54,7 +39,7 @@ public class ItLispLexer extends It
   //--------------- Lexer's evaluate ---------------
   public It evaluate(ArrayList<It> input)
   {         
-    if (input.size()==0) return It.NIL;
+    if (input.size()==0) return NIL;
     
     ArrayList<It> tokens_1 = tokenize_phase1(input.get(0).toString());
     ArrayList<It> tokens_2 = tokenize_phase2(tokens_1);
@@ -89,8 +74,8 @@ public class ItLispLexer extends It
     for (int i=0; i < tokens_in.size(); i++) 
     {
       token_current   = tokens_in.get(i);
-      token_next      = It.NIL;
-      token_next_next = It.NIL;
+      token_next      = NIL;
+      token_next_next = NIL;
       
       if (i+1 < tokens_in.size())
         token_next = tokens_in.get(i+1);     
@@ -99,10 +84,10 @@ public class ItLispLexer extends It
         token_next_next = tokens_in.get(i+2);
                 
       if (   token_current.getNext()  ==SEPARATOR_STRING
-          && token_next!=It.NIL && token_next_next!=It.NIL
+          && token_next!=NIL && token_next_next!=NIL
           && token_next_next.getNext()==SEPARATOR_STRING)
       {
-        It new_token = It.NewValue(token_next.getValue().toString(), ItLisp.K_STRING_TYPE);
+        It new_token = NewValue(token_next.getValue().toString(), ItLisp.K_STRING_TYPE);
         tokens_out.add(new_token);
         i+=2;
       }
@@ -137,9 +122,9 @@ public class ItLispLexer extends It
     String token_type = ItLisp.K_UNKNOWN_TYPE;
     
     //---- 1. Check first if token value is NIL
-    if (   token_str.equals(It.K_NIL)
+    if (   token_str.equals(K_NIL)
         || token_str.toUpperCase().equals("F"))
-      token_type = It.K_NIL;
+      token_type = K_NIL;
     //----
     
     //---- 2. Check if token is WhiteSpace:
@@ -183,7 +168,7 @@ public class ItLispLexer extends It
     //----
     
     //---- 7. Check if token value is a known Symbol in ENVIRONMENT
-    if (ENVIRONMENT.getFacet(token_str) != It.NIL)
+    if (ENVIRONMENT.getFacet(token_str) != NIL)
       token_type = ItLisp.K_SYMBOL_TYPE;
     //----
     

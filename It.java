@@ -10,24 +10,8 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 27 may 2012 - 16:54
+ * Michel Kern - 28 may 2012 - 22:52
  * Copyright (C) <2012> www.terimakasi.com
- * ...................................................................................
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights to use, 
- * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
- * the Software, and to permit persons to whom the Software is furnished to do so, 
- * subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all 
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
- * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS 
- * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
- * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * ...................................................................................
  */
 package scom;
 
@@ -42,19 +26,29 @@ import java.lang.reflect.Constructor;
 
 public class It implements java.util.Map.Entry<Object, Object> 
 {
+  public static final String BASENAME   = It.class.getSimpleName();
   public static final String CLASS_NAME = It.class.getCanonicalName();
   
   public static final String               K_NIL                    = "NIL";
   public static       It                   NIL                      = new It(K_NIL, K_NIL, K_NIL);
   
+  public static final String               K_ID                     = "id";
+  public static       It                   ID                       = new It(K_ID, K_ID, K_ID);
+    
   public static final String               K_NAME                   = "name";
   public static       It                   NAME;
   
   public static final String               K_FUNCTION               = "function";
+  
   public static final String               K_VALUE                  = "value";
+  public static       It                   VALUE;
+  
+  public static final String               K_COUNT                  = "count";
+  public static       It                   COUNT;
+  
   public static final String               K_CLASS                  = "class";
   public static final String               K_SUPERCLASS             = "superclass";
-  public static final String               K_COUNT                  = "count";
+
   public static final String               K_MODEL_LAYER            = "model_layer";
   
   public static final String               V_CLASS_MODEL            = "class_model";
@@ -92,7 +86,6 @@ public class It implements java.util.Map.Entry<Object, Object>
   public static final int                  WITH_UNLIMITED_DEPTH     = 0;
     
   protected           HashMap<It, It>      _facet_map               = new HashMap<It, It>();
-  protected           It[]                 _metadata                = new It[]{ NIL };
     
   protected           HashMap<String, It>  _kv2it                   = new HashMap<String, It>();
   protected final     Object               _key;
@@ -101,7 +94,7 @@ public class It implements java.util.Map.Entry<Object, Object>
   protected final     UUID                 _uuid                    = UUID.randomUUID();
   
   //*** Private Constructor: API clients must use factory method 'New' instead
-  // Usage: if provided key is "" it's value will be instance's UUID
+  // Usage: if provided key is empty string ("") then it will be replaced by instance's UUID
   protected It(Object key, Object value, Object next) 
   {
     if (key.toString().equals(""))
@@ -112,7 +105,15 @@ public class It implements java.util.Map.Entry<Object, Object>
     _value  = value;
     _next   = next;
    
-    initEnvironment_();
+    initEnvironment();
+  } // Private Constructor
+  
+  // special use: store instance's 'ID' facet (uuid)
+  protected It(Object key, Object value) 
+  {
+    _key   = key;    
+    _value = value;
+    _next  = NIL;
   } // Private Constructor
   
   static protected It GetEnvironment()
@@ -123,7 +124,7 @@ public class It implements java.util.Map.Entry<Object, Object>
     return ENVIRONMENT;
   } //---- GetEnvironment
   
-  protected void initEnvironment_()
+  protected void initEnvironment()
   {
     if (_init_count > 1)
       return;
@@ -131,32 +132,35 @@ public class It implements java.util.Map.Entry<Object, Object>
     _init_count++;
     GetEnvironment();
     
-    NAME  = new It(K_NAME, K_NAME, K_NIL);
-      
+    NAME  = new It(K_NAME,  K_NAME,  K_NIL);  
     NEW_F = new It(K_NEW_F, K_NEW_F, K_NIL);
+    VALUE = new It(K_VALUE, K_VALUE, K_NIL);
+    
+    COUNT = new It(K_COUNT, K_COUNT, K_NIL)
+      .putFacet(K_MODEL_LAYER, CLASS_MODEL);
     
     // http://en.wikipedia.org/wiki/Metaclass  
     METACLASS = NewNativeClass_(K_METACLASS, NIL, NIL);       // NB: don't add 'COUNT' value yet, INTEGER is required  
     
     OBJECT = NewNativeClass_(K_OBJECT, METACLASS, NIL);       // NB: don't add 'COUNT' value yet, INTEGER is required 
-      OBJECT.putFacet(K_VALUE,          NIL);
+      OBJECT.putFacet(VALUE,            NIL);
     
     INTEGER = NewNativeClass_(K_INTEGER, METACLASS, OBJECT);  // NB: don't add 'COUNT' value yet, INTEGER is required 
-      INTEGER.putFacet(K_VALUE,         New(0)); 
+      INTEGER.putFacet(VALUE,           New(0)); 
       
     STRING = NewNativeClass_(K_STRING,  METACLASS, OBJECT);    // NB: don't add 'COUNT' value yet, INTEGER is required 
-      STRING.putFacet(K_VALUE,          New("")); 
+      STRING.putFacet(VALUE,            New("")); 
     
-    METACLASS.putFacet(K_COUNT,         New(3)); // NB: requires INTEGER so don't move this code up (OBJECT creation)
-    OBJECT.putFacet(K_COUNT,            New(0));
-    INTEGER.putFacet(K_COUNT,           New(0)); 
-    STRING.putFacet(K_COUNT,            New(0));
+    METACLASS.putFacet(COUNT,           New(3)); // NB: requires INTEGER so don't move this code up (OBJECT creation)
+    OBJECT.putFacet(COUNT,              New(0));
+    INTEGER.putFacet(COUNT,             New(0)); 
+    STRING.putFacet(COUNT,              New(0));
     
     ENVIRONMENT.putFacet(K_METACLASS,   METACLASS)
                .putFacet(K_OBJECT,      OBJECT) 
                .putFacet(K_INTEGER,     INTEGER)
                .putFacet(K_STRING,      STRING); 
-  } //---- InitEnvironment_
+  } //---- initEnvironment
   
   
   //---------- New ----------
@@ -178,7 +182,6 @@ public class It implements java.util.Map.Entry<Object, Object>
     String instance_name = instance_base_name + instance_count;
     It instance_it = new It(instance_name, instance_name, NIL);
       instance_it.putFacet(K_CLASS, class_it);
-      instance_it.putFacet(K_NAME,  NewValue(instance_name));
     //---- Instanciate class
     
       
@@ -198,13 +201,22 @@ public class It implements java.util.Map.Entry<Object, Object>
       }
     }
     //----- Add facets from class
+    
+    // Caution: this code should be AFTER 'Add facets from class'
+    instance_it.putFacet(NAME, New(instance_name));
       
     return instance_it;
   } //---- New (instanciate 'It class')
   
+  static public It New() 
+  {
+    It item = New(OBJECT);
+    return item;
+  }
   static public It New(Object key, Object value) 
   {
-    return New(key, value, NIL);
+    It item = New(key, value, NIL);
+    return item;
   }
   static public It New(Object key, Object value, Object option) 
   {
@@ -215,7 +227,8 @@ public class It implements java.util.Map.Entry<Object, Object>
   }
   static public It New(Object key, Object value, String class_name) 
   {
-    return New(key, value, NIL, class_name);
+    It item = New(key, value, NIL, class_name);
+    return item;
   }
   static public It New(Object key, Object value, Object next, String class_name) 
   {
@@ -228,7 +241,8 @@ public class It implements java.util.Map.Entry<Object, Object>
         Class       cls         = Class.forName(class_name);
         Constructor constructor = cls.getDeclaredConstructor(new Class[]{Object.class, Object.class, Object.class});
           constructor.setAccessible(true);
-        return (It) constructor.newInstance(new Object[]{key, value, next});
+        It item = (It) constructor.newInstance(new Object[]{key, value, next});
+        return item;
       }
       catch(Exception e)
       {  
@@ -252,10 +266,10 @@ public class It implements java.util.Map.Entry<Object, Object>
     if (! IsClass(metaclass_it))  return It.NIL;
     
     It new_class = new It(class_name, class_name, K_NIL);
-      new_class.putFacet      (K_NAME,       new_class);
+      new_class.putFacet      (NAME,         new_class);
+      new_class.putFacet      (COUNT,        New(0));
       new_class.putClassFacet_(K_CLASS,      metaclass_it);
       new_class.putClassFacet_(K_NEW_F,      new_class);
-      new_class.putClassFacet_(K_COUNT,      New(0));
       new_class.putClassFacet_(K_SUPERCLASS, super_it);
       
       ENVIRONMENT.putFacet(class_name, new_class);
@@ -362,15 +376,17 @@ public class It implements java.util.Map.Entry<Object, Object>
   static public It New(String value)
   {  
     //return NewValue(value, NIL);
-    return New(value, value);  // ToDo: .next is not NIL
+    It new_string = New(STRING, NIL);
+    new_string.setValue(value);
+    return new_string;
   } // New (NewValue String)
   
   // Caution !! Regression if replaced by New ( String)
   static private It NewValue(String value)
-  {  return NewValue(value,         NIL);  }
+  {  return NewValue(value, NIL);  }
   
   static public It NewValue(String value, Object next)
-  {  return new It(K_VALUE,         value, next);  }
+  {  return new It(K_VALUE, value, next);  }
   //---------- NewValue
   
   
@@ -447,6 +463,12 @@ public class It implements java.util.Map.Entry<Object, Object>
   public It getFacet(Object facet)
   { 
     String key_value = KeyValue_(facet, this.getValue());
+    It     it        = _kv2it.get(key_value);
+    return getFacet(it);
+  }
+  public It getFacet(Object facet, Object facet_value)
+  { 
+    String key_value = KeyValue_(facet, facet_value);
     It     it        = _kv2it.get(key_value);
     return getFacet(it);
   }

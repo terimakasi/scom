@@ -3,7 +3,7 @@
               ------------------------------
               ----- Programmer's Guide -----
               ------------------------------
-            www.terimakasi.com    27th May 2012
+        www.terimakasi.com    28 may 2012 - 22:52
             https://github.com/terimakasi/scom
 --------------------------------------------------------------
 1. Introduction
@@ -28,16 +28,80 @@
      - by overriding 'evaluate' method in subclasses of 'It'
      - once a subclass implements a method, it could then be added to an It instance as a 'behavioral facet'
 
-  c. Adaptative Object Model
-  -----------------------------------------
+  c. Native Adaptative Object Model
+  ---------------------------------
      SCOM supports the AOM paradigm (Adaptative Object Model), where business domain classes are not static like
      'regular OOP languages' (e.g: Java, C#/C++) but instead dynamically created at runtime (much like
-     classes described by Semantic Web ontology language: 'Owl')
+     classes described by Semantic Web Ontology language: 'Owl')
 
-2. Guidelines
+2. Getting Started
+------------------
+  a. Create an It instance by calling 'New()' factory method:
+     It item = It.New();
+
+  b. Then add a 'VALUE' facets (a facet is like similar an attributes or property):
+     e.g: item.putFacet(VALUE, New("Hellow World !")); 
+
+  c. Then you can use 'Print()' to show instance value and facets:
+     e.g: Print(item);
+
+  d. Now test this code by running 'HelloWorld.java' (in scom.tutorials.helloworld sample), the output should be:
+     **** SCOM: HelloWorld sample ****
+     object1
+      name: object1
+      value: Hellow World !
+      class: Object
+
+     Explanation: here we see that we have created an It instance which is also an instance of 'Object' class
+                  in SCOM native AOM (Adaptative Object Model), this instance has 3 facets:
+                  - value = 'Hellow World !'
+                  - class = 'Object'
+                  - name  = 'object1'
+
+  e. Now we may uncomment the following line (in 'HelloWorld.java'):
+     //Print(item, WITH_UNLIMITED_DEPTH);
+
+     This will print facets of item's facets recursively: 
+
+       object1:
+         value: Hellow World !
+         class: Object
+           Object:
+             class: Class
+               Class:
+                 superclass: Class
+                 count: 3
+                 new: Class
+                 class: Class
+                 name: Class
+             count: 1
+             value: NIL
+             superclass: Object
+             new: Object
+             name: Object
+         name: object1
+
+     Explanation: here we see that 'class' facet which is 'Object' has also itsn own facets:
+                  note: 'class' of 'Object' is 'Class' which is the metaclass of SCOM native AOM (Adaptative Object Model)
+                        'Object' has also a 'superclass' (which is itself)
+       Object:
+         class: Class
+           Class:
+             superclass: Class
+             count: 3
+             new: Class
+             class: Class
+             name: Class
+         count: 1
+         value: NIL
+         superclass: Object
+         new: Object
+         name: Object
+
+3. Guidelines
 ---------------
-  All samples/apps built on top of SCOL must comply to the following rules:
-    - All implementation classes (non taking into account unit/functional tests) must be subclasses of 'It' class
+  All samples/apps built on top of SCOM must comply to the following rules:
+    - All implementation classes (not taking into account unit/functional tests) must be subclasses of 'It' class
     - subclasses should not add instance methods to the API (else it wull break SCOM paradigm), thus are only 
       allowed to override:
       - 'evaluate()' and optionally 'toString()'
@@ -49,16 +113,23 @@
   Native Object Model: 'ENVIRONMENT'
   ----------------------------------
   'It' core class provides a native Object Model ('ENVIRONMENT') which is a Singleton populated by 'initEnvironment()'
-  note: application may extend 'ENVIRONMENT' by overriding 'init_environment()' (see: 'ItLisp' in com.samples.lang.lisp)
+  note: application may extend 'ENVIRONMENT' by overriding 'initEnvironment()' (see: 'ItLisp' in com.samples.lang.lisp)
+        in that case the overriding 'initEnvironment()' must start by calling the parent class's initEnvironment():
+         
+         protected void initEnvironment()
+         {
+           super.initEnvironment();
+           ...
+         }
 
-2. License
+4. License
 ---------------
   This project is Open Source, under 'MIT license' (http://en.wikipedia.org/wiki/MIT_License)
 
-3. Samples
+5. Samples
 ---------------
 
-4. To Do
+6. To Do
 --------------------
 - Quality:
   - Unit tests & Automatic Tests
@@ -77,9 +148,11 @@ Appendix
   - All static methods start with an Upper case letter then CamelCase (e.g: 'NewClass()')
     - private/protected methods have a additional '_' suffix (e.g: 'IsNIL_')
   - instance methods start with a Lower case letter then CamelCase (e.g: 'getKey()')
-    - private/protected methods have a additional '_' suffix (e.g: 'initEnvironment_')
+    - private methods have a additional '_' suffix
+  - private instance fields start with a '_' prefix (e.g: _key);
   - Subclasses of It should be prefixed with 'It' (e.g: ItLisp)
     - those which are meant to be a 'method facet' of an It instance should be suffixed with 'F' (e.g: 'ItSuccessorF')
-  - variables and methods parameters should use the 'underscore' naming convention (eg: 'class_it')
-  - variables which are 'It' instances should be suffixed with '_it' (eg: 'class_it')
+  - variables and methods parameters:
+    - should use the 'underscore' naming convention (eg: 'class_it')
+    - if they are 'It' instances, they should be suffixed with '_it' (eg: 'class_it')
   - variables which are used for typecasting (e.g: Object to String) should be suffixed with '_str' (eg: 'o_str')
