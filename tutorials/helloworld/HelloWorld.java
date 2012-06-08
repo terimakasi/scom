@@ -19,9 +19,23 @@ public class HelloWorld
   {
     Print("**** SCOM: HelloWorld sample ****");
     
-    It item  = It.New();
-    item.putFacet(VALUE, New("Hellow World !")); 
+    It item  = It.New(); // this creates an instance of 'OBJECT' native AOM class
+    item.putFacet(VALUE, New("Hello World !")); 
+    
+    // Prints object's value and facets on Standard console output
     Print(item);
+    
+    // Now print object's value and facets in 'object1.txt' file
+    Print(item, TEXT_FILE_WRITER);
+    
+    // Now print object's value and facets in a String
+    String output_str = Print(item, STRING_WRITER);
+    Print(output_str);
+    
+    // Now print item facets recursively
     //Print(item, WITH_UNLIMITED_DEPTH);
+    
+    // Calls interactive command shell
+    SHELL.evaluate();
   } //---- main()
 } //---------- HelloWorld

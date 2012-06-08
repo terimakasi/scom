@@ -40,7 +40,7 @@
      It item = It.New();
 
   b. Then add a 'VALUE' facets (a facet is like similar an attributes or property):
-     e.g: item.putFacet(VALUE, New("Hellow World !")); 
+     e.g: item.putFacet(VALUE, New("Hello World !")); 
 
   c. Then you can use 'Print()' to show instance value and facets:
      e.g: Print(item);
@@ -49,12 +49,12 @@
      **** SCOM: HelloWorld sample ****
      object1
       name: object1
-      value: Hellow World !
+      value: Hello World !
       class: Object
 
      Explanation: here we see that we have created an It instance which is also an instance of 'Object' class
                   in SCOM native AOM (Adaptative Object Model), this instance has 3 facets:
-                  - value = 'Hellow World !'
+                  - value = 'Hello World !'
                   - class = 'Object'
                   - name  = 'object1'
 

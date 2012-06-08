@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class ItSuccessorF extends It
 {
-  public static final String BASENAME   = ItSuccessorF.class.getSimpleName();
+  public static final String BASENAME   = "successor()";
   public static final String CLASS_NAME = ItSuccessorF.class.getCanonicalName();
           
   protected ItSuccessorF(Object key, Object value, Object next) 
