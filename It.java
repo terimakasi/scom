@@ -25,6 +25,7 @@ import java.lang.Class;
 import java.lang.Integer;
 import java.lang.reflect.Constructor;
 import java.util.*;
+import javax.script.*;
 
 public class It implements java.util.Map.Entry<Object, Object> 
                 
@@ -49,7 +50,11 @@ public class It implements java.util.Map.Entry<Object, Object>
   public static final String               K_VALUE                  = "value";
   public static       It                   VALUE;
   
+  public static final String               K_SCRIPT_F               = "script()";
+  public static       It                   SCRIPT_F;
+  
   public static final String               K_CLASS                  = "class";
+  
   public static final String               K_SUPERCLASS             = "superclass";
 
   public static final String               K_MODEL_LAYER            = "model_layer";
@@ -152,6 +157,7 @@ public class It implements java.util.Map.Entry<Object, Object>
     NAME             = new It("name",       "name",        K_NIL);  
     NEW_F            = new It(K_NEW_F,      K_NEW_F,       K_NIL);
     VALUE            = new It(K_VALUE,      K_VALUE,       K_NIL);
+    SCRIPT_F         = new It(K_SCRIPT_F,   K_SCRIPT_F,    K_NIL);
     
     STRING_WRITER    = new It("StringWriter", "StringWriter", K_NIL);
     TEXT_FILE_WRITER = new It("FileWriter",   "FileWriter",   K_NIL);
@@ -172,7 +178,7 @@ public class It implements java.util.Map.Entry<Object, Object>
       STRING.putFacet(VALUE,            New("")); 
       
     COMMAND = NewNativeClass_(K_COMMAND,METACLASS, OBJECT);    // NB: don't add 'COUNT' value yet, INTEGER is required 
-      COMMAND.putFacet(VALUE,           New("")); 
+      COMMAND.putFacet(SCRIPT_F,        New("")); 
     
     METACLASS.putFacet(COUNT,           New(4)); // NB: requires INTEGER so don't move this code up (OBJECT creation)
     OBJECT.putFacet(COUNT,              New(0));
@@ -328,6 +334,21 @@ public class It implements java.util.Map.Entry<Object, Object>
     return true;
   } //---- IsClass 
   
+  public boolean isInstanceOf(It o_it)
+  {
+    if (o_it == null)             return false;
+    if (o_it == NIL)              return false;
+    
+    if (! IsClass(o_it))          return false;
+    
+    //System.out.println("isInstanceOf item: " + this.toString());
+    if (getFacet(K_CLASS)==NIL)   return false;
+    
+    It class_it = this.getFacet(K_CLASS);
+    if (class_it == o_it)
+      return true;
+    return false;
+  } //---- isInstanceOf 
   
   static protected It IsNIL_(Object key, Object value)
   {
@@ -375,9 +396,10 @@ public class It implements java.util.Map.Entry<Object, Object>
       return New(this);
     
     if (this == SHELL)
-    {
       RunShell_();
-    }
+    else if (this.isInstanceOf(COMMAND))
+      return New(runJavascript_());
+    
     return this;
   }
   //---------- evaluate
@@ -820,30 +842,110 @@ public class It implements java.util.Map.Entry<Object, Object>
             || input_str.toLowerCase().equals("h")
             || input_str.toLowerCase().equals("help"))
         {
-          output_str =     "?, h, help:                         prints this text\n"
-                       + "  help command:                       list available commands\n"
-                       + "  q, quit or exit:                    exits Shell";
-          System.out.println("  " + output_str);
-        }
-        //---------- help command ----------
-        else if (input_str.toLowerCase().trim().replace(" ", "").equals("helpcommand"))
-        {
-          output_str =     "print 'variable' (or p 'variable'): prints value of variable (e.g: print Object)\n"
-                       + "  new:                                creates an 'Object' instance\n" 
-                       + "  new 'class':                        creates an instance of 'class' (eg: new Integer)\n" 
-                       + "  ?, h, help:                         prints this text\n"
-                       + "  help command:                       list available commands\n"
-                       + "  q, quit or exit:                    exits Shell";
+          output_str =     "print 'variable':        prints value of variable (e.g: print Object)\n"
+                       + "  eval 'variable':         evaluates 'variable'\n"
+                       + "  set 'variable' 'value':  sets value of 'variable'\n" 
+                       + "  edit 'variable':         edit value of 'variable' in default editor\n" 
+                       + "  new:                     creates an 'Object' instance\n" 
+                       + "  new 'class':             creates an instance of 'class' (eg: new Integer)\n" 
+                       + "  list 'class':            lists all instances of 'class' (eg: list Command)\n"
+                       + "  ?, h, help:              prints this text\n"
+                       + "  q, quit or exit:         exits this Shell";
           System.out.println("  " + output_str);
         }
         //---------- print ----------
         else if (  tokens.size()==2 
-                && (tokens.get(0).equals("print") || tokens.get(0).equals("p")))
+                && (tokens.get(0).equals("print")))
         {
           It item = _Instance_map.get(tokens.get(1));
           if (item == null)
             item = NIL;
           output_str = Print(item, STRING_WRITER);
+          System.out.println(IndentLines_(output_str));
+        }
+        //---------- list ----------
+        else if (  tokens.size()==2 
+                && (tokens.get(0).equals("list")))
+        {
+          It class_it = _Instance_map.get(tokens.get(1));
+          if (class_it == null)
+            class_it = NIL;
+          output_str = "";
+          if (IsClass(class_it))
+          {
+            Set<String>  instance_names = _Instance_map.keySet();
+            Iterator<String> iterator   = instance_names.iterator();
+            while (iterator.hasNext())
+            {
+              String instance_name = iterator.next();
+              It     instance      = _Instance_map.get(instance_name);
+              if (instance.isInstanceOf(class_it))
+                output_str += Print(instance_name + "\n", STRING_WRITER);  
+            }
+            if (output_str != "")
+              System.out.println(IndentLines_(output_str));
+          }
+        }
+        //---------- edit ----------
+        else if (  tokens.size()==2 
+                && (tokens.get(0).equals("edit")))
+        {
+           It item = _Instance_map.get(tokens.get(1));
+           if (item == null)
+             item = NIL;
+          
+           if (item != NIL)
+           {
+             String         filename = "facet_value.txt";
+             
+             boolean success = (new File(filename)).delete();
+             
+             FileWriter     fstream  = new FileWriter(filename);
+             BufferedWriter out      = new BufferedWriter(fstream);
+         
+             It value_it = NIL;
+             if (item.isInstanceOf(COMMAND))
+               value_it = item.getFacet(SCRIPT_F); 
+             else
+               value_it = item.getFacet(VALUE);            
+             out.write(value_it.toString());
+             out.close();
+           
+             Runtime runtime = Runtime.getRuntime();
+             Process process = runtime.exec("notepad.exe " + filename);
+             process.waitFor();
+             String new_value_str = ReadFileAsString_(filename);
+             if (item.isInstanceOf(COMMAND))
+               item.putFacet(SCRIPT_F, New(new_value_str)); 
+             else
+               item.putFacet(VALUE, New(new_value_str)); 
+           }
+           output_str = Print(item, STRING_WRITER);
+           System.out.println(IndentLines_(output_str));
+        }
+        //---------- set ----------
+        else if (  tokens.size()>=3 
+                && (tokens.get(0).equals("set")))
+        {
+          It item = _Instance_map.get(tokens.get(1));
+          if (item == null)
+            item = NIL;
+          String value_str = tokens.get(2);
+          if (item.isInstanceOf(COMMAND))
+            item.putFacet(SCRIPT_F, New(value_str));
+          else
+            item.putFacet(VALUE, New(value_str));
+          output_str = Print(item, STRING_WRITER);
+          System.out.println(IndentLines_(output_str));
+        }
+        //---------- eval ----------
+        else if (  tokens.size()==2 
+                && (tokens.get(0).equals("eval")))
+        {
+          It item = _Instance_map.get(tokens.get(1));
+          if (item == null)
+            item = NIL;
+          output_str = item.evaluate().toString();
           System.out.println(IndentLines_(output_str));
         }
         //---------- new ----------
@@ -870,18 +972,64 @@ public class It implements java.util.Map.Entry<Object, Object>
           loop_enabled = false;
         else
         {
-          output_str = input_str;
-          System.out.println("  " + output_str);
+          // check if first token is a Command instance
+          if (tokens.size()==1) 
+          {
+            It command_it = _Instance_map.get(tokens.get(0));
+            if (command_it != null && command_it.isInstanceOf(COMMAND))
+            {
+              output_str = command_it.evaluate().toString();
+              System.out.println(IndentLines_(output_str));
+            }
+            else
+            {
+              // Unknown command
+              output_str = "Unknown command: " + tokens.get(0) + "\n  use 'help' for a list of available commands";
+              System.out.println("  " + output_str);
+            }
+          }
         }
       }
       catch (Exception e) {}
     }
   } //---- RunShell_
-  
+ 
+  // http://docs.oracle.com/javase/6/docs/technotes/guides/scripting/programmer_guide/index.html#helloworld
+  private String runJavascript_()
+  {
+    String output_str = "";
+    try
+    {
+      // create a script engine manager
+      ScriptEngineManager factory = new ScriptEngineManager();
+      
+      // create a JavaScript engine
+      ScriptEngine        engine  = factory.getEngineByName("JavaScript");
+      
+      // Redirect the engine's standard output to a StringWriter instance.
+      StringWriter writer = new StringWriter ();
+      PrintWriter  pw     = new PrintWriter(writer, true);
+      engine.getContext().setWriter(pw);
+
+      String script = this.getFacet(SCRIPT_F).toString();
+      engine.eval(script);
+
+      // Obtain the string buffer's contents and output these contents.
+      StringBuffer sb = writer.getBuffer();
+      output_str      = sb.toString();
+    }
+    catch (Exception e) 
+    {
+      // Syntax error in Javascript
+      output_str = e.getMessage();
+    }
+    return output_str;
+  } //---- runJavascript_
+
   static private String IndentLines_(String message)
   {
-    String[] lines = message.split("\n");
-    String output_str = "";
+    String[] lines      = message.split("\n");
+    String   output_str = "";
     for (int i=0; i<lines.length; i++)
     {
       output_str += "  " + lines[i];
@@ -890,4 +1038,28 @@ public class It implements java.util.Map.Entry<Object, Object>
     }
     return output_str;
   } //---- IndentLines_
+  
+  private static String ReadFileAsString_(String filename)
+  {
+    try
+    {
+      StringBuffer   fileData = new StringBuffer(1000);
+      BufferedReader reader   = new BufferedReader(new FileReader(filename));
+      char[]         buf      = new char[1024];
+      int            numRead  = 0;
+      while((numRead = reader.read(buf)) != -1)
+      {
+        String readData = String.valueOf(buf, 0, numRead);
+        fileData.append(readData);
+        buf = new char[1024];
+      }
+      reader.close();
+      return fileData.toString();
+    }
+    catch (Exception e) 
+    {
+      System.out.println(e.getMessage());
+    }
+    return "";
+  } //---- ReadFileAsString_
 } //---------- It
