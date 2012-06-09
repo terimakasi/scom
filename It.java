@@ -10,7 +10,7 @@
  * ...................................................................................
  * SCOM: Single Class Object Model (http://code.google.com/p/scom/)
  * Licence: MIT (http://en.wikipedia.org/wiki/MIT_License)
- * Michel Kern - 28 may 2012 - 22:52
+ * Michel Kern - 10 june 2012 - 00:49
  * Copyright (C) <2012> www.terimakasi.com
  */
 package scom;
