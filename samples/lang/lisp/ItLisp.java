@@ -18,10 +18,11 @@
  */
 package scom.samples.lang.lisp;
 
-import scom.samples.lang.lisp.functions.*;
-import scom.It;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import scom.It;
+import scom.samples.lang.lisp.functions.*;
 
 public class ItLisp extends It
 {

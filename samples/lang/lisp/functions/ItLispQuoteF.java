@@ -12,7 +12,6 @@ package scom.samples.lang.lisp.functions;
 
 import java.util.ArrayList;
 import scom.It;
-import scom.samples.lang.lisp.*;
 
 public class ItLispQuoteF extends It
 {

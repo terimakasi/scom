@@ -11,9 +11,8 @@
 package scom.samples.lang.lisp.functions;
 
 import java.util.ArrayList;
-import scom.*;
-import static scom.It.*;
-import scom.samples.lang.lisp.*;
+import scom.It;
+import static scom.It.NIL;
 
 public class ItLispCdrF extends It
 {

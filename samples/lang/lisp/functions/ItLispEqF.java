@@ -11,8 +11,7 @@
 package scom.samples.lang.lisp.functions;
 
 import java.util.ArrayList;
-import scom.*;
-import scom.samples.lang.lisp.*;
+import scom.It;
 
 public class ItLispEqF extends It
 {

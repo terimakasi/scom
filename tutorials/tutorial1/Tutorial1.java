@@ -7,7 +7,6 @@
  */
 package scom.tutorials.tutorial1;
 
-import scom.tutorials.tutorial1.ItSuccessorF;
 import scom.It;
 import static scom.It.*;
 
@@ -23,16 +22,17 @@ public class Tutorial1
     It item  = New(K_VALUE, "this is item1")
                .putFacet(NAME,        New("item1"))
                .putFacet("version",   New("1.01"))
-               .putFacet(ItSuccessorF.BASENAME, New(K_FUNCTION, "successor", ItSuccessorF.CLASS_NAME));
+               .putFacet(ItSuccessorF.BASENAME, New(ItSuccessorF.BASENAME, ItSuccessorF.BASENAME, ItSuccessorF.CLASS_NAME));
     Print(item);
     Print("  successeur de '" + item + "': " + item.getFacet(ItSuccessorF.BASENAME).evaluate(New(2)));
     //----- 'item1' It instance
     
     
     //----- 'Voiture' class -----
-    It voiture_class_it = NewClass("Voiture")
+    //It voiture_class_it = NewClass("Voiture")
+    It voiture_class_it = New("Voiture", METACLASS)
                           .putFacet(K_MOTOR, New("rolls royce"))
-                          .putFacet(ItSuccessorF.BASENAME, New(K_FUNCTION, "successor", ItSuccessorF.CLASS_NAME));
+                          .putFacet(ItSuccessorF.BASENAME, New(ItSuccessorF.BASENAME, "successor", ItSuccessorF.CLASS_NAME));
     
     It ma_voiture = New(voiture_class_it);
       Print(ma_voiture);

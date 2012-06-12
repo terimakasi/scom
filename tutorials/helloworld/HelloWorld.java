@@ -7,7 +7,6 @@
  */
 package scom.tutorials.helloworld;
 
-import scom.tutorials.tutorial1.ItSuccessorF;
 import scom.It;
 import static scom.It.*;
 
@@ -26,10 +25,10 @@ public class HelloWorld
     Print(item);
     
     // Now print object's value and facets in 'object1.txt' file
-    Print(item, TEXT_FILE_WRITER);
+    Print(item, TEXT_FILE_WRITER, WITH_UNLIMITED_DEPTH);
     
     // Now print object's value and facets in a String
-    String output_str = Print(item, STRING_WRITER);
+    String output_str = Print(item, STRING_WRITER, WITH_UNLIMITED_DEPTH);
     Print(output_str);
     
     // Now print item facets recursively

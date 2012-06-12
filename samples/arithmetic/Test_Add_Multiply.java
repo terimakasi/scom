@@ -9,11 +9,11 @@
  */
 package scom.samples.arithmetic;
 
-import static scom.It.*;
-import scom.It;
-import scom.samples.arithmetic.operators.ItMultiplyF;
-import scom.samples.arithmetic.operators.ItAddF;
 import java.util.ArrayList;
+import scom.It;
+import static scom.It.*;
+import scom.samples.arithmetic.operators.ItAddF;
+import scom.samples.arithmetic.operators.ItMultiplyF;
 
 public class Test_Add_Multiply 
 {
@@ -21,8 +21,8 @@ public class Test_Add_Multiply
   {
     Print("**** Test_Add_Multiply ****");
     
-    It add_function      = New(K_FUNCTION, "add",      ItAddF.CLASS_NAME);
-    It multiply_function = New(K_FUNCTION, "multiply", ItMultiplyF.CLASS_NAME);
+    It add_function      = New(ItAddF.BASENAME,      ItAddF.BASENAME,      ItAddF.CLASS_NAME);
+    It multiply_function = New(ItMultiplyF.BASENAME, ItMultiplyF.BASENAME, ItMultiplyF.CLASS_NAME);
    
     ArrayList<It> multiply_params = ToList(new Object[]{ 2, 3 });
       multiply_params.add(add_function.evaluate(ToList(new Object[]{ 1.5, 3.5 })));

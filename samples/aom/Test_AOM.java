@@ -9,8 +9,8 @@
  */
 package scom.samples.aom;
 
-import static scom.It.*;
 import scom.It;
+import static scom.It.*;
 
 public class Test_AOM 
 {
@@ -20,7 +20,8 @@ public class Test_AOM
     
     Print(INTEGER);
         
-    It thing_class = NewClass("Thing");
+    //It thing_class = NewClass("Thing");
+    It thing_class = New("Thing", METACLASS);
       Print(thing_class); // instance count should be 0
     
     It thing_it = thing_class.evaluate(); // implicitly calls New(thing_class);

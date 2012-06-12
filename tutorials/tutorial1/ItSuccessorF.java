@@ -7,9 +7,8 @@
  */
 package scom.tutorials.tutorial1;
 
-import scom.It;
-
 import java.util.ArrayList;
+import scom.It;
 
 public class ItSuccessorF extends It
 {

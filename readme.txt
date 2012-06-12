@@ -50,7 +50,10 @@ Table of Contents
      SCOM supports the AOM paradigm (Adaptative Object Model), where business 
      domain classes are not static like 'regular OOP languages' (e.g: Java, 
      C#/C++) but instead dynamically created at runtime (much like classes 
-     described by Semantic Web Ontology language: 'Owl')
+     described by Semantic Web Ontology language: 'Owl') like pure Object
+     languages (e.g: Smalltalk)
+
+     Note: SCOM is 'null safe', this is implemented by a native singleton ('NIL')
 
 2. Getting Started
 ------------------
@@ -210,7 +213,7 @@ Table of Contents
         note: SCOM is 'null safe', this is implemented by a native singleton 
               ('NIL') which requires a factory method
     - subclasses should not add static/class methods
-    - subclasses must override 'NAME' and 'CLASS_NAME' static fields
+    - subclasses must override 'BASENAME' and 'CLASS_NAME' static fields
 
   Native Object Model: 'ENVIRONMENT'
   ----------------------------------
@@ -236,17 +239,46 @@ Table of Contents
 ---------------
 
 7. To Do
---------------------
-- Quality:
-  - Unit tests & Automatic Tests
-  - count It instances and avoid unnecessary duplication of Literals/Constants 
-    (e.g: NEW_F)
-- Semantic Network:
-  - RDF serialization, may be used to specify native Object Model
-  - Graph Layout (with D3 Javascript framework)
-- Languages:
-  - Implementation of Lisp interpreter
-  - Encapsulation of Java embedded interpreter
+-------------------
+  - Readme.md or Readme.html ?
+  - Automatic tests for regression check
+  - Check if Windows/Unix to adapt (e.g: GetDesktop(),...):
+    - Text editor (Notepad/vi)
+  - Events / Hooks / Callbacks ?
+    - Simulation of digital electronic components (e.g: logic gates)
+  - Environment
+    - Implement 'Plugins' for self-extensibility of 'environment'
+      - SHELL          could be a Plugin !
+      - TextFileWriter could be a Plugin !
+    - 'ERROR' variable which stores a message about last error
+  - Shell: 
+    - if input ends with ';' then interpret it as Javascript
+    - 'info' command in Shell: show version, instance count, plugins
+    - 'exec' command
+    - 'run' command (runs commands from a script file)
+    - 'history' command
+    - implement 'history' with up/down arrow keys
+  - StringWriter and TextFileWriter as instances of 'Writer' (check in SHELL with 'list Writer')
+  - Writer:
+    - RDF / Owl / JSon
+    - Database !
+    - D3/JS Graph drawing
+    - Html (1 file per object/facet and links)
+    - GraphViz format
+  - Reader !
+    - e.g: read graph from Git or from url
+    - Database !
+  - API consistency: 
+    - get rid of 'NewValue()'
+    - getValue() and 'VALUE' facet should be only 2 different means to access value 
+  - AOM:
+    - New Integer,...: .next should not be NIL
+    - Allow to define name when instanciating a class (e.g: New(name, class_it))
+    - Chain Inheritance (attributes of superclasses recursively)
+    - 'implement IInterface' cf. Java and allow implementations of multiple 'Interface' classes
+    - Multiple values for _value of an It instance (getValue() = get(0) and add getValue(index) and valueCount) 
+    - Scope/Context for a facet (ex: localization of 'NAME')
+  - Port to JVM !
 
 A. Appendix
 -----------

@@ -13,11 +13,7 @@
  */
 package scom.samples.lang.lisp;
 
-import java.util.ArrayList;
 import scom.It;
-import scom.It;
-import scom.samples.lang.lisp.functions.ItLispCdrF;
-import scom.samples.lang.lisp.functions.ItLispConsF;
 
 public class ItCons extends It
 {

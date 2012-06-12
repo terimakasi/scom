@@ -10,7 +10,6 @@
 package scom.samples.arithmetic;
 
 import scom.It;
-import static scom.It.*;
 import scom.samples.arithmetic.operators.ItAddF;
 
 public class Test_Add 
@@ -19,7 +18,7 @@ public class Test_Add
   {
     It.Print("**** Test_Add ****");
     
-    It add_function = It.New(K_FUNCTION, "add", ItAddF.CLASS_NAME);
+    It add_function = It.New(ItAddF.BASENAME, ItAddF.BASENAME, ItAddF.CLASS_NAME);
     It.Print(add_function.evaluate(It.ToList(new Object[]{0.33, 0.66})));
   } //---- main()
 } //---------- Test_Add

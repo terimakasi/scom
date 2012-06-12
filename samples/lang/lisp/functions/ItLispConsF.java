@@ -11,7 +11,7 @@
 package scom.samples.lang.lisp.functions;
 
 import java.util.ArrayList;
-import scom.*;
+import scom.It;
 import scom.samples.lang.lisp.ItCons;
 
 public class ItLispConsF extends It

@@ -12,8 +12,7 @@ package scom.samples.lang.lisp.functions;
 
 import java.util.ArrayList;
 import scom.It;
-import static scom.It.*;
-import scom.samples.lang.lisp.ItCons;
+import static scom.It.NIL;
 import scom.samples.lang.lisp.ItLisp;
 
 public class ItLispCarF extends It

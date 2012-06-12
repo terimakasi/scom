@@ -10,11 +10,8 @@
  */
 package scom.samples.lang.lisp;
 
-import scom.samples.lang.lisp.ItLisp;
 import java.util.ArrayList;
-import scom.*;
-import scom.samples.lang.lisp.*;
-import scom.samples.lang.lisp.functions.*;
+import scom.It;
 
 public class Test_Lisp 
 {

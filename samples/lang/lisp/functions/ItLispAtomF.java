@@ -11,10 +11,9 @@
 package scom.samples.lang.lisp.functions;
 
 import java.util.ArrayList;
-import scom.*;
-import static scom.It.*;
-import scom.samples.lang.lisp.*;
-import scom.tutorials.tutorial1.ItSuccessorF;
+import scom.It;
+import static scom.It.NIL;
+import static scom.It.TRUE;
 
 public class ItLispAtomF extends It
 {

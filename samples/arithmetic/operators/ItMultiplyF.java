@@ -9,8 +9,8 @@
  */
 package scom.samples.arithmetic.operators;
 
-import scom.*;
 import java.util.ArrayList;
+import scom.It;
 
 public class ItMultiplyF extends It
 {
